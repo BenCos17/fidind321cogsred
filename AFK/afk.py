@@ -67,7 +67,9 @@ class AFKCog(commands.Cog):
         await ctx.send(embed=embed)
 
 @commands.command()
-async def isafk(self, ctx, user: discord.Member):
+async def isafk(self, ctx, user: typing.Union[discord.Member, int]):
+    if isinstance(user, int):
+        user = discord.utils.get(ctx.guild.members, id=user)
     if user.id in self.afk_users:
         reason = self.afk_reasons.get(user.id, '')
         timestamp = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
@@ -84,3 +86,4 @@ async def isafk(self, ctx, user: discord.Member):
             color=discord.Color.dark_green()
         )
     await ctx.send(embed=embed)
+
