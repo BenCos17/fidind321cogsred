@@ -66,23 +66,21 @@ class AFKCog(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def isafk(self, ctx, user_id: int):
-        user = ctx.guild.get_member(user_id)
-        if user and user.id in self.afk_users:
-            reason = self.afk_reasons.get(user.id, '')
-            timestamp = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
-            embed = discord.Embed(
-                title='AFK status',
-                description=f'{user.display_name} is AFK since {timestamp}. Reason: {reason}',
-                color=discord.Color.dark_orange()
-            )
-            embed.set_footer(text=f"AFK since {timestamp}")
-        else:
-            member = await ctx.guild.fetch_member(user_id)
-            embed = discord.Embed(
-                title='AFK status',
-                description=f'{member.display_name} is not AFK.',
-                color=discord.Color.dark_green()
-            )
-        await ctx.send(embed=embed)
+@commands.command()
+async def isafk(self, ctx, user: discord.Member):
+    if user.id in self.afk_users:
+        reason = self.afk_reasons.get(user.id, '')
+        timestamp = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+        embed = discord.Embed(
+            title='AFK status',
+            description=f'{user.display_name} is AFK since {timestamp}. Reason: {reason}',
+            color=discord.Color.dark_orange()
+        )
+        embed.set_footer(text=f"AFK since {timestamp}")
+    else:
+        embed = discord.Embed(
+            title='AFK status',
+            description=f'{user.display_name} is not AFK.',
+            color=discord.Color.dark_green()
+        )
+    await ctx.send(embed=embed)
