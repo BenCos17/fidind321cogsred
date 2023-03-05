@@ -75,9 +75,6 @@ class AFKCog(commands.Cog):
 
     @commands.command()
     async def isafk(self, ctx, user: typing.Union[discord.Member, int]):
-        """
-        Check if a user is AFK.
-        """
         if isinstance(user, int):
             user = discord.utils.get(ctx.guild.members, id=user)
         if user.id in self.afk_users:
@@ -96,3 +93,6 @@ class AFKCog(commands.Cog):
                 color=discord.Color.dark_green()
             )
         await ctx.send(embed=embed)
+
+    @isafk.error
+    async
