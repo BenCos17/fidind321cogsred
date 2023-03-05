@@ -1,4 +1,5 @@
 import discord
+import typing
 from redbot.core import commands, checks
 from datetime import datetime
 
@@ -10,7 +11,10 @@ class AFKCog(commands.Cog):
 
     async def _set_afk(self, user, reason=None):
         if user.id not in self.afk_users:
-            await user.edit(nick='[AFK] ' + user.display_name)
+            try:
+                await user.edit(nick='[AFK] ' + user.display_name)
+            except discord.Forbidden:
+                pass
             self.afk_users.add(user.id)
             if reason:
                 self.afk_reasons[user.id] = reason[:25]
@@ -23,7 +27,10 @@ class AFKCog(commands.Cog):
 
     async def _remove_afk(self, user):
         if user.id in self.afk_users:
-            await user.edit(nick=user.display_name[6:])
+            try:
+                await user.edit(nick=user.display_name[6:])
+            except discord.Forbidden:
+                pass
             self.afk_users.remove(user.id)
             if user.id in self.afk_reasons:
                 del self.afk_reasons[user.id]
@@ -67,9 +74,10 @@ class AFKCog(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    async def isafk(self, ctx, user_id: int):
-        user = ctx.guild.get_member(user_id)
-        if user and user.id in self.afk_users:
+    async def isafk(self, ctx, user: typing.Union[discord.Member, int]):
+        if isinstance(user, int):
+            user = discord.utils.get(ctx.guild.members, id=user)
+        if user.id in self.afk_users:
             reason = self.afk_reasons.get(user.id, '')
             timestamp = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
             embed = discord.Embed(
@@ -79,10 +87,9 @@ class AFKCog(commands.Cog):
             )
             embed.set_footer(text=f"AFK since {timestamp}")
         else:
-            member = await ctx.guild.fetch_member(user_id)
             embed = discord.Embed(
                 title='AFK status',
-                description=f'{member.display_name} is not AFK.',
+                description=f'{user.display_name} is not AFK.',
                 color=discord.Color.dark_green()
             )
         await ctx.send(embed=embed)
