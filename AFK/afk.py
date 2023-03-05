@@ -75,6 +75,9 @@ class AFKCog(commands.Cog):
 
     @commands.command()
     async def isafk(self, ctx, user: typing.Union[discord.Member, int]):
+        """
+        Check if a user is AFK.
+        """
         if isinstance(user, int):
             user = discord.utils.get(ctx.guild.members, id=user)
         if user.id in self.afk_users:
