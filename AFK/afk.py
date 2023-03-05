@@ -95,4 +95,5 @@ class AFKCog(commands.Cog):
         await ctx.send(embed=embed)
 
     @isafk.error
-    async
+    async def _set_afk(self, user, reason=None):
+
