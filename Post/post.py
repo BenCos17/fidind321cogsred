@@ -47,7 +47,7 @@ class Post(commands.Cog):
             await channel.send(message)
 
         except discord.Forbidden:
-            await ctx.send(f"I do not have permission to send messages in {channel.mention}. Please make sure I have the necessary permissions to send messages and try again. If you are not sure what permissions I need, please check your own permissions or ask a server administrator.")
+            await ctx.send(f"I do not have permission to send messages in {channel.mention}. Please make sure I have the necessary permissions to send messages and try again. If you are not sure what permissions I need, please check your own permissions or ask a server administrator for help.")
 
 def setup(bot):
     bot.add_cog(Post(bot))
