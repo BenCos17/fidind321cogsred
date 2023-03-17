@@ -5,7 +5,7 @@ from redbot.core.commands.errors import CheckFailure
 class Post(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
+
     async def can_send_message(self, ctx):
         if ctx.channel.permissions_for(ctx.me).send_messages and ctx.channel.permissions_for(ctx.author).send_messages:
             return True
@@ -16,9 +16,18 @@ class Post(commands.Cog):
                 await ctx.send("You do not have permission to send messages in this channel.")
             return False
 
+    async def can_post_in_channel(self, ctx, channel):
+        if ctx.channel == channel or ctx.author.permissions_in(channel).send_messages:
+            return True
+        else:
+            await ctx.send(f"You do not have permission to send messages in {channel.mention}. Please make sure you have the necessary permissions to send messages and try again. If you are not sure what permissions you need, please check your own permissions or ask a server administrator.")
+            return False
+
     @commands.command()
     @commands.check(lambda ctx: self.can_send_message(ctx))
     async def post(self, ctx, title, description, color, channel: discord.TextChannel):
+        if not await self.can_post_in_channel(ctx, channel):
+            return
         try:
             if color.startswith("#"):
                 # if color starts with '#' it's a hexadecimal color code
@@ -39,6 +48,8 @@ class Post(commands.Cog):
     @commands.command()
     @commands.check(lambda ctx: self.can_send_message(ctx))
     async def postmessage(self, ctx, message, channel: discord.TextChannel):
+        if not await self.can_post_in_channel(ctx, channel):
+            return
         try:
             await channel.send(message)
 
