@@ -22,14 +22,16 @@ class NitroCog(commands.Cog):
         await self.config.nitro_links.set_raw(nitro_name, value={"url": nitro_url})
         await ctx.send(f"Added new Nitro link '{nitro_name}': {nitro_url}")
 
-    @commands.command()
-    async def listnitro(self, ctx):
-        nitro_links = await self.config.nitro_links()
-        if not nitro_links:
-            await ctx.send("There are no Nitro links configured.")
-        else:
-            nitro_list = "\n".join([f"{name}: {link['url']}" for name, link in nitro_links.items()])
-            await ctx.send(f"Available Nitro links:\n{nitro_list}")
+@commands.command()
+async def listnitro(self, ctx):
+    nitro_links = await self.config.nitro_links()
+    if not nitro_links:
+        await ctx.send("There are no Nitro links configured.")
+    else:
+        nitro_list = "\n".join([f"- {name}: {link['url']}" for name, link in nitro_links.items()])
+        message = f"**Available Nitro links:**\n{nitro_list}"
+        await ctx.send(message)
+
 
     @commands.command()
     @commands.is_owner()
