@@ -28,8 +28,11 @@ class NitroCog(commands.Cog):
         if not nitro_links:
             await ctx.send("There are no Nitro links configured.")
         else:
-            nitro_list = "\n".join([f"{name}: {link['url']}" for name, link in nitro_links.items()])
-            await ctx.send(f"Available Nitro links:\n{nitro_list}")
+            embed = discord.Embed(title="Available Nitro Links", color=discord.Color.blue())
+            for name, link in nitro_links.items():
+                embed.add_field(name=name, value=link["url"], inline=False)
+            await ctx.send(embed=embed)
+
 
     @commands.command()
     @commands.is_owner()
